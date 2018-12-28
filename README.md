@@ -1,2 +1,2 @@
 # TheOneBotCLI
-TheOneBot CLI
+Stub (Nothing here yet)
