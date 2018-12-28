@@ -1,0 +1,2 @@
+# TheOneBotCLI
+TheOneBot CLI
