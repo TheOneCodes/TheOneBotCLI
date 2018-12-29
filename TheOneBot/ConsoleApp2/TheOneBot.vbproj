@@ -276,6 +276,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="editForm.Designer.vb">
+      <DependentUpon>editForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="editForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="TheOneBotCLI.vb" />
     <Compile Include="LoginForm.Designer.vb">
       <DependentUpon>LoginForm.vb</DependentUpon>
@@ -300,6 +306,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="editForm.resx">
+      <DependentUpon>editForm.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="LoginForm.resx">
       <DependentUpon>LoginForm.vb</DependentUpon>
     </EmbeddedResource>

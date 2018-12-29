@@ -39,8 +39,15 @@ Module TheOneBotCLI
     Function interpret(command As String, Optional host As Boolean = False)
         Dim data As String = Nothing
         If command.StartsWith("conf") Then
-            If command.StartsWith("conf add question ") Then
-
+            If command.StartsWith("conf edit") Then
+                If command.StartsWith("conf edit help") Then
+                    If host Then
+                        Console.WriteLine("Launching editor...")
+                        Dim editor As New EditForm
+                        Console.WriteLine("Close editor to continue")
+                        editor.ShowDialog()
+                    End If
+                End If
             End If
         ElseIf command.StartsWith("ping") Then
             If pingCount = 0 Then

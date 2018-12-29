@@ -11,5 +11,13 @@
     <Setting Name="saved" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="help" Type="System.String" Scope="User">
+      <Value Profile="(Default)">These are the default values and have not been changed
+```css
+help • • • • • • • • • • • • • • • Opens a list of commands
+ping &lt;discord.com&gt; • • • • • • • • Pings a server and returns the delay in miliseconds (defaults to discord.com)
+logout • • • • • • • • • • • • • • Signs the bot out of discord
+```</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
