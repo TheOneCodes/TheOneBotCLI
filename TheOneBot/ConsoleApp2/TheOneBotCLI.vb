@@ -10,12 +10,19 @@ Module TheOneBotCLI
     Public log As Boolean
     Dim wake As String = ""
     Public editorPurpose As Single = 0
+    Dim rng As Random
 
     'marks the command line
     Sub mark()
-        Console.Title = "TheOneBot CLI"
+
         Console.WriteLine("TheOneBot [Version 0.1]")
         Console.WriteLine("(c) 2018 TheOneCode")
+        If My.Settings.debug Then
+            Console.WriteLine("Debug mode")
+            Console.Title = "TheOneBot CLI *Debug mode*"
+        Else
+            Console.Title = "TheOneBot CLI"
+        End If
         Console.WriteLine()
         Console.WriteLine("Type ""help"" for help")
         Console.WriteLine()
@@ -24,9 +31,19 @@ Module TheOneBotCLI
     'arms the command line in order to await instructions from the host (server cli)
     Sub arm()
         wake = My.Settings.wake
-        Console.Title = "TheOneBot CLI"
-        Console.ForegroundColor = ConsoleColor.Green
-        Console.Write(discord.CurrentUser.Username.ToString & "#" & discord.CurrentUser.Discriminator & "@" & Environment.UserDomainName)
+        If My.Settings.debug Then
+            Console.Title = "TheOneBot CLI *Debug mode*"
+            Console.ForegroundColor = ConsoleColor.DarkGreen
+            Console.Write(discord.CurrentUser.Username.ToString & "#" & discord.CurrentUser.Discriminator)
+            Console.ResetColor()
+            Console.Write("{debug}")
+            Console.ForegroundColor = ConsoleColor.DarkGreen
+            Console.Write("@" & Environment.UserDomainName)
+        Else
+            Console.Title = "TheOneBot CLI"
+            Console.ForegroundColor = ConsoleColor.Green
+            Console.Write(discord.CurrentUser.Username.ToString & "#" & discord.CurrentUser.Discriminator & "@" & Environment.UserDomainName)
+        End If
         Console.ResetColor()
         Console.Write(":")
         Console.ForegroundColor = ConsoleColor.Blue
@@ -39,19 +56,23 @@ Module TheOneBotCLI
     Sub CLI()
         Console.WriteLine("Loading command line interface")
         Threading.Thread.Sleep(1000)
-        Console.Clear()
+        Try
+            Console.Clear()
+        Catch ex As Exception
+            MsgBox("ree")
+        End Try
         mark()
         Do
             Console.ResetColor()
             arm()
-            Console.WriteLine(interpret(wake & Console.ReadLine().ToLower, True, True))
+            Console.WriteLine(interpret(wake & Console.ReadLine().ToLower, True, True, Environment.UserName))
         Loop
     End Sub
 
     'Interpreter for both internal and external commands (and other fun stuff
-    Function interpret(command As String, Optional host As Boolean = False, Optional moderator As Boolean = False)
+    Function interpret(command As String, Optional host As Boolean = False, Optional moderator As Boolean = False, Optional user As String = Nothing)
         Dim data As String = Nothing
-        If command.StartsWith(wake & "conf") Then
+        If command.StartsWith(wake & "conf ") Then
             'CONF
             'The conf command is for seting variables such as the help list
             If command.StartsWith(wake & "conf help") Then
@@ -68,43 +89,71 @@ Module TheOneBotCLI
                     'Clients get this message (its a list of conf commands
                     Return "`TheOneBot configuration assistant`" & vbNewLine & "```css" & vbNewLine & wake & "conf help ------------------------------ Returns help dialog on clients, configures main help list on host" & vbNewLine & wake & "conf nword <function>{number} --------- Adjusts TheOneBot's built in nword counter (defaults to host only)" & vbNewLine & vbNewLine & "*Incomplete (more on its way)```"
                 End If
-            ElseIf command.StartsWith(wake & "conf nword") And moderator Then
-                'Configures the NWord counter™
-                If command.StartsWith(wake & "conf nword +") Then
-                    'Adds an NWord offset to the counter
-                    data = command.Replace(wake & "conf nword +", "")
-                    Try
-                        My.Settings.nWords += Convert.ToDecimal(data)
-                        Return "Added " & data & " nwords!"
+            ElseIf command.StartsWith(wake & "conf debug") Then
+                If host Then
+                    If My.Settings.debug Then
+                        My.Settings.debug = False
                         My.Settings.Save()
-                    Catch ex As Exception
-                        Return "Failed to add " & data & " nwords to the list"
-                    End Try
-                ElseIf command.StartsWith(wake & "conf nword -") Then
-                    'Subtracts an NWord offset to the counter
-                    data = command.Replace(wake & "conf nword -", "")
-                    Try
-                        My.Settings.nWords -= Convert.ToDecimal(data)
-                        Return "Removed " & data & " nwords!"
+                        Console.WriteLine("Loading regular mode")
+                        Threading.Thread.Sleep(5000)
+                        Console.Clear()
+                        mark()
+                        Return Nothing
+                    Else
+                        My.Settings.debug = True
                         My.Settings.Save()
-                    Catch ex As Exception
-                        Return "Failed to remove " & data & " nwords from the list"
-                    End Try
-                ElseIf command.StartsWith(wake & "conf nword =") Or command.StartsWith(wake & "conf nword ") Then
-                    'Sets the NWords
-                    data = command.Replace(wake & "conf nword ", "")
-                    data = data.Replace("=", "")
-                    Try
-                        My.Settings.nWords = Convert.ToDecimal(data)
-                        Return "Set to " & data & " nwords!"
-                        My.Settings.Save()
-                    Catch ex As Exception
-                        Return "Failed to set list to " & data & " nwords"
-                    End Try
+                        Console.WriteLine("Loading debug mode")
+                        Threading.Thread.Sleep(5000)
+                        Console.Clear()
+                        mark()
+                        Return Nothing
+                    End If
                 Else
-                    'Done wrong
-                    Return "Improper use of `conf nword`"
+                    Return "`Insufficient permissions`"
                 End If
+            ElseIf command.StartsWith(wake & "conf nword ") Then
+                'Configures the NWord counter™
+                If moderator Then
+                    If command.StartsWith(wake & "conf nword +") Then
+                        'Adds an NWord offset to the counter
+                        data = command.Replace(wake & "conf nword +", "")
+                        Try
+                            My.Settings.nWords += Convert.ToDecimal(data)
+                            Return "Added " & data & " nwords!"
+                            My.Settings.Save()
+                        Catch ex As Exception
+                            Return "Failed to add " & data & " nwords to the list"
+                        End Try
+                    ElseIf command.StartsWith(wake & "conf nword -") Then
+                        'Subtracts an NWord offset to the counter
+                        data = command.Replace(wake & "conf nword -", "")
+                        Try
+                            My.Settings.nWords -= Convert.ToDecimal(data)
+                            Return "Removed " & data & " nwords!"
+                            My.Settings.Save()
+                        Catch ex As Exception
+                            Return "Failed to remove " & data & " nwords from the list"
+                        End Try
+                    ElseIf command.StartsWith(wake & "conf nword =") Or command.StartsWith(wake & "conf nword ") Then
+                        'Sets the NWords
+                        data = command.Replace(wake & "conf nword ", "")
+                        data = data.Replace("=", "")
+                        Try
+                            My.Settings.nWords = Convert.ToDecimal(data)
+                            Return "Set to " & data & " nwords!"
+                            My.Settings.Save()
+                        Catch ex As Exception
+                            Return "Failed to set list to " & data & " nwords"
+                        End Try
+                    Else
+                        'Done wrong
+                        Return "Improper use of `" & wake & "conf nword`"
+                    End If
+                Else
+                    Return "`Insufficient permissions`"
+                End If
+            Else
+                Return "Improper use of conf, see `" & wake & "conf help` for proper usage"
             End If
         ElseIf command.StartsWith(wake & "nword") Then
             'NWORD
@@ -119,8 +168,13 @@ Module TheOneBotCLI
             'PING
             'Returns a milisecond value to specified server (defaults to discord, as thats what the bot will connect to
             If command.Length > 4 Then
-                data = command.Replace(wake & "ping ", "")
-                Return PingSite(data)
+                data = command.Replace(wake & "ping", "")
+                data = data.Replace(" ", "")
+                If data = "" Then
+                    Return PingSite(host)
+                Else
+                    Return PingSite(host, data)
+                End If
             Else
                 Return PingSite()
             End If
@@ -149,32 +203,72 @@ Module TheOneBotCLI
             'Designed to prevent NWords as it will kill mrs. Obama
             If command.Contains("nword") Or command.Contains("n-word") Or command.Contains("n word") Then
                 Return "You cant say that, that's **racist!**"
+            Else
+                Return Nothing
             End If
-        ElseIf command.Contains("nigga") Or command.Contains("nibba") Or command.Contains("nibber") Or command.Contains("bibba") Or command.Contains("bibber") Or command.Contains("niger") Or command.Contains("nii") Then
+        ElseIf command.Contains("nigga") Or command.Contains("nibba") Or command.Contains("nibber") Or command.Contains("bibba") Or command.Contains("bibber") Or command.Contains("niger") Or command.Contains("nigger") Or command.Contains("nii") Then
+            'NWord Counter
+            'Adds a number to the count every NWord
             If host = False Then
-                'NWord Counter
-                'Adds a number to the count every NWord
-                My.Settings.nWords += 1
-                My.Settings.Save()
-                Return "mrs. Obama, *get down*"
+                If moderator Then
+                    My.Settings.nWords += 1
+                    My.Settings.Save()
+                    Return "Your a moderator, I expect better of you." & vbNewLine & "*Anyways,* mrs. Obama died, way to go!"
+                Else
+                    My.Settings.nWords += 1
+                    My.Settings.Save()
+                    If rng.Next(1, 100) = 50 Then
+                        Return "mrs. Obama..." & vbNewLine & "mrs. Obama?" & vbNewLine & "..." & vbNewLine & "mrs. Obama is unresponsive"
+                    Else
+                        Return "mrs. Obama, *get down*"
+                    End If
+                End If
             End If
         ElseIf host Then
+            'tells host that they 
             Console.ForegroundColor = ConsoleColor.Cyan
             Return "Command " & command & " not available"
             Console.ResetColor()
+        Else
+            Return Nothing
         End If
+        Return Nothing
     End Function
-    Private Function PingSite(Optional address As String = "discordapp.com")
-        Try
-            Dim pinger As New Ping
-            Dim reply As PingReply = pinger.Send(address)
-            Return "Ping to `" & reply.Address.ToString & "` (" & address & ") took `" & reply.RoundtripTime & "`ms"
-        Catch ex As Exception
-            Dim pinger As New Ping
-            Dim reply As PingReply = pinger.Send("discord.com")
-            Return "Ping to `" & reply.Address.ToString & "` (defaulted to discord.com) took `" & reply.RoundtripTime & "`ms"
-        End Try
+
+    'Ping a site
+    Private Function PingSite(Optional host As Boolean = False, Optional address As String = "discord.com")
+        Dim a = 1
+        Dim results As String = Nothing
+        Do Until a = 5
+            Try
+                Dim pinger As New Ping
+                Dim reply As PingReply = pinger.Send(address)
+                Dim pinged As String = "Ping `" & a & "` to `" & reply.Address.ToString & "` (" & address & ") took `" & reply.RoundtripTime & "`ms"
+                If host Then
+                    Console.WriteLine(pinged)
+                Else
+                    If results <> Nothing Then
+                        results = results & vbNewLine
+                    End If
+                    results = results & pinged
+                End If
+            Catch ex As Exception
+                Dim pinged As String = "Ping `" & a & "` to `" & address & "` failed"
+                If host Then
+                    Console.WriteLine(pinged)
+                Else
+                    If results <> Nothing Then
+                        results = results & vbNewLine
+                    End If
+                    results = results & pinged
+                End If
+            End Try
+            a += 1
+        Loop
+        Return results
     End Function
+
+    'Try to connect to discord
     Async Sub attemptConnect()
         Dim good = True
         Dim except As String = ""
@@ -216,9 +310,9 @@ Module TheOneBotCLI
     Private Async Function receiver(message As SocketMessage) As Task
         If message.Author.IsBot = False Then
             If DirectCast(message.Author, SocketGuildUser).GuildPermissions.Administrator Then
-                Await message.Channel.SendMessageAsync(interpret(message.Content.ToString.Replace(":", "").ToLower, False, True))
+                Await message.Channel.SendMessageAsync(interpret(message.Content.ToString.Replace(":", "").ToLower, False, True, "<@" & message.Author.ToString & ">"))
             Else
-                Await message.Channel.SendMessageAsync(interpret(message.Content.ToString.Replace(":", "").ToLower, False, False))
+                Await message.Channel.SendMessageAsync(interpret(message.Content.ToString.Replace(":", "").ToLower, False, False, "<@" & message.Author.ToString & ">"))
             End If
         End If
     End Function
