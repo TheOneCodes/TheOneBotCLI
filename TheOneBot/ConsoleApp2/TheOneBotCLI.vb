@@ -7,6 +7,7 @@ Module TheOneBotCLI
     Public log As Boolean
     Dim wake As String = ""
     Dim pingCount As Decimal
+    Public editorPurpose As Single = 0
     Sub mark()
         Console.Title = "TheOneBot CLI"
         Console.WriteLine("TheOneBot [Version 0.1]")
@@ -16,9 +17,10 @@ Module TheOneBotCLI
         Console.WriteLine()
     End Sub
     Sub arm()
+        wake = My.Settings.wake
         Console.Title = "TheOneBot CLI"
         Console.ForegroundColor = ConsoleColor.Green
-        Console.Write(Environment.UserName & "@" & Environment.UserDomainName)
+        Console.Write(discord.CurrentUser.Username.ToString & "#" & discord.CurrentUser.Discriminator & "@" & Environment.UserDomainName)
         Console.ResetColor()
         Console.Write(":")
         Console.ForegroundColor = ConsoleColor.Blue
@@ -32,34 +34,40 @@ Module TheOneBotCLI
         Console.Clear()
         mark()
         Do
+            Console.ResetColor()
             arm()
-            Console.WriteLine(interpret(Console.ReadLine().ToLower, True))
+            Console.WriteLine(interpret(wake & Console.ReadLine().ToLower, True, True))
         Loop
     End Sub
-    Function interpret(command As String, Optional host As Boolean = False)
+    Function interpret(command As String, Optional host As Boolean = False, Optional moderator As Boolean = False)
         Dim data As String = Nothing
-        If command.StartsWith("conf") Then
-            If command.StartsWith("conf edit") Then
-                If command.StartsWith("conf edit help") Then
+        If command.StartsWith(wake & "conf") Then
+            If command.StartsWith(wake & "conf edit") Then
+                If command.StartsWith(wake & "conf edit help") Then
                     If host Then
                         Console.WriteLine("Launching editor...")
+                        editorPurpose = 1
                         Dim editor As New EditForm
                         Console.WriteLine("Close editor to continue")
                         editor.ShowDialog()
+                        Console.WriteLine("Saving")
                     End If
                 End If
             End If
-        ElseIf command.StartsWith("ping") Then
+        ElseIf command.StartsWith(wake & "help") Then
+            Console.ForegroundColor = ConsoleColor.Yellow
+            Return My.Settings.help
+        ElseIf command.StartsWith(wake & "ping") Then
             If pingCount = 0 Then
                 If command.Length > 4 Then
-                    data = command.Replace("ping ", "")
+                    data = command.Replace(wake & "ping ", "")
                     Return PingSite(data)
                 Else
                     Return PingSite()
                 End If
                 pingCount += 1
             End If
-        ElseIf command.StartsWith("logout") Then
+        ElseIf command.StartsWith(wake & "logout") Then
             If host Then
                 discord.StopAsync()
                 Console.Clear()
@@ -83,14 +91,16 @@ Module TheOneBotCLI
             Console.ResetColor()
         End If
     End Function
-    Private Function PingSite(Optional address As String = "discord.com")
+    Private Function PingSite(Optional address As String = "discordapp.com")
         If address.Contains("Ping ") = False Then
             Try
                 Dim pinger As New Ping
                 Dim reply As PingReply = pinger.Send(address)
                 Return "Ping to `" & reply.Address.ToString & "` (" & address & ") took `" & reply.RoundtripTime & "`ms"
             Catch ex As Exception
-
+                Dim pinger As New Ping
+                Dim reply As PingReply = pinger.Send("discord.com")
+                Return "Ping to `" & reply.Address.ToString & "` (defaulted to discord.com) took `" & reply.RoundtripTime & "`ms"
             End Try
         End If
     End Function
@@ -119,8 +129,12 @@ Module TheOneBotCLI
     End Sub
 
     Private Async Function receiver(message As SocketMessage) As Task
-        Await message.Channel.SendMessageAsync(interpret(message.Content.ToString.ToLower))
-        pingCount = 0
+        If DirectCast(message.Author, SocketGuildUser).GuildPermissions.Administrator Then
+            Await message.Channel.SendMessageAsync(interpret(message.Content.ToString.ToLower, False, True))
+            Console.WriteLine("admin")
+        Else
+            Await message.Channel.SendMessageAsync(interpret(message.Content.ToString.ToLower, False, False))
+        End If
     End Function
 
     Sub exitApp()

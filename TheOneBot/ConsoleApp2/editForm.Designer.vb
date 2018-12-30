@@ -24,8 +24,10 @@ Partial Class EditForm
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(EditForm))
         Me.ToolStrip1 = New System.Windows.Forms.ToolStrip()
-        Me.TextBox1 = New System.Windows.Forms.TextBox()
         Me.ToolStripDropDownButton1 = New System.Windows.Forms.ToolStripDropDownButton()
+        Me.txtBox = New System.Windows.Forms.TextBox()
+        Me.SaveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.RevertChangesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -43,26 +45,42 @@ Partial Class EditForm
         Me.ToolStrip1.TabIndex = 0
         Me.ToolStrip1.Text = "ToolStrip1"
         '
-        'TextBox1
-        '
-        Me.TextBox1.BackColor = System.Drawing.Color.FromArgb(CType(CType(44, Byte), Integer), CType(CType(47, Byte), Integer), CType(CType(51, Byte), Integer))
-        Me.TextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.TextBox1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TextBox1.ForeColor = System.Drawing.Color.White
-        Me.TextBox1.Location = New System.Drawing.Point(0, 36)
-        Me.TextBox1.Multiline = True
-        Me.TextBox1.Name = "TextBox1"
-        Me.TextBox1.Size = New System.Drawing.Size(800, 414)
-        Me.TextBox1.TabIndex = 1
-        '
         'ToolStripDropDownButton1
         '
         Me.ToolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me.ToolStripDropDownButton1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SaveToolStripMenuItem, Me.RevertChangesToolStripMenuItem})
         Me.ToolStripDropDownButton1.Image = CType(resources.GetObject("ToolStripDropDownButton1.Image"), System.Drawing.Image)
         Me.ToolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.ToolStripDropDownButton1.Name = "ToolStripDropDownButton1"
         Me.ToolStripDropDownButton1.Size = New System.Drawing.Size(42, 23)
         Me.ToolStripDropDownButton1.Text = "File"
+        '
+        'txtBox
+        '
+        Me.txtBox.BackColor = System.Drawing.Color.FromArgb(CType(CType(44, Byte), Integer), CType(CType(47, Byte), Integer), CType(CType(51, Byte), Integer))
+        Me.txtBox.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.txtBox.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.txtBox.Font = New System.Drawing.Font("Lucida Console", 20.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtBox.ForeColor = System.Drawing.Color.White
+        Me.txtBox.Location = New System.Drawing.Point(0, 36)
+        Me.txtBox.Multiline = True
+        Me.txtBox.Name = "txtBox"
+        Me.txtBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
+        Me.txtBox.Size = New System.Drawing.Size(800, 414)
+        Me.txtBox.TabIndex = 1
+        Me.txtBox.Text = "You should not be able to see this"
+        '
+        'SaveToolStripMenuItem
+        '
+        Me.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem"
+        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(180, 24)
+        Me.SaveToolStripMenuItem.Text = "Save"
+        '
+        'RevertChangesToolStripMenuItem
+        '
+        Me.RevertChangesToolStripMenuItem.Name = "RevertChangesToolStripMenuItem"
+        Me.RevertChangesToolStripMenuItem.Size = New System.Drawing.Size(180, 24)
+        Me.RevertChangesToolStripMenuItem.Text = "Revert changes"
         '
         'EditForm
         '
@@ -70,11 +88,12 @@ Partial Class EditForm
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(35, Byte), Integer), CType(CType(39, Byte), Integer), CType(CType(42, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(800, 450)
-        Me.Controls.Add(Me.TextBox1)
+        Me.Controls.Add(Me.txtBox)
         Me.Controls.Add(Me.ToolStrip1)
         Me.ForeColor = System.Drawing.Color.White
         Me.Name = "EditForm"
-        Me.Text = "Form1"
+        Me.ShowIcon = False
+        Me.Text = "TheOneBot Conf GUI"
         Me.ToolStrip1.ResumeLayout(False)
         Me.ToolStrip1.PerformLayout()
         Me.ResumeLayout(False)
@@ -84,5 +103,7 @@ Partial Class EditForm
 
     Friend WithEvents ToolStrip1 As Windows.Forms.ToolStrip
     Friend WithEvents ToolStripDropDownButton1 As Windows.Forms.ToolStripDropDownButton
-    Friend WithEvents TextBox1 As Windows.Forms.TextBox
+    Friend WithEvents txtBox As Windows.Forms.TextBox
+    Friend WithEvents SaveToolStripMenuItem As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents RevertChangesToolStripMenuItem As Windows.Forms.ToolStripMenuItem
 End Class
