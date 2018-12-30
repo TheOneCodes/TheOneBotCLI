@@ -92,16 +92,28 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("These are the default values and have not been changed"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"```css"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"help • • • • • • "& _ 
-            "• • • • • • • • • Opens a list of commands"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"ping <discord.com> • • • • • • • • P"& _ 
-            "ings a server and returns the delay in miliseconds (defaults to discord.com)"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"lo"& _ 
-            "gout • • • • • • • • • • • • • • Signs the bot out of discord"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"```")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute("These are the default values and have not been changed"&Global.Microsoft.VisualBasic.ChrW(10)&"```css"&Global.Microsoft.VisualBasic.ChrW(10)&"help • • • • • • • "& _ 
+            "• • • • • • • • Opens a list of commands"&Global.Microsoft.VisualBasic.ChrW(10)&"ping <discord.com> • • • • • • • • Ping"& _ 
+            "s a server and returns the delay in miliseconds (defaults to discord.com)"&Global.Microsoft.VisualBasic.ChrW(10)&"logout"& _ 
+            " • • • • • • • • • • • • • • Signs the bot out of discord"&Global.Microsoft.VisualBasic.ChrW(10)&"```")>  _
         Public Property help() As String
             Get
                 Return CType(Me("help"),String)
             End Get
             Set
                 Me("help") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+        Public Property nWords() As Integer
+            Get
+                Return CType(Me("nWords"),Integer)
+            End Get
+            Set
+                Me("nWords") = value
             End Set
         End Property
     End Class

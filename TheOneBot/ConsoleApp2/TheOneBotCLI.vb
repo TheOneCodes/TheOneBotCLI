@@ -1,7 +1,10 @@
-﻿Imports Discord
+﻿Imports System.Timers
+Imports Discord
 Imports Discord.WebSocket
 Imports System.Net.NetworkInformation
 Module TheOneBotCLI
+    Private game As Timer = New Timer(8000)
+    Dim gameNumber As Boolean = False
     Dim discord As DiscordSocketClient
     Public token = ""
     Public log As Boolean
@@ -42,16 +45,13 @@ Module TheOneBotCLI
     Function interpret(command As String, Optional host As Boolean = False, Optional moderator As Boolean = False)
         Dim data As String = Nothing
         If command.StartsWith(wake & "conf") Then
-            If command.StartsWith(wake & "conf edit") Then
-                If command.StartsWith(wake & "conf edit help") Then
-                    If host Then
-                        Console.WriteLine("Launching editor...")
-                        editorPurpose = 1
-                        Dim editor As New EditForm
-                        Console.WriteLine("Close editor to continue")
-                        editor.ShowDialog()
-                        Console.WriteLine("Saving")
-                    End If
+            If command.StartsWith(wake & "conf help") Then
+                If host Then
+                    Console.WriteLine("Launching editor...")
+                    editorPurpose = 1
+                    Dim editor As New EditForm
+                    Console.WriteLine("Close editor to continue")
+                    editor.ShowDialog()
                 End If
             End If
         ElseIf command.StartsWith(wake & "help") Then
@@ -81,9 +81,11 @@ Module TheOneBotCLI
             End If
         ElseIf command.Contains("going") Or command.Contains("gonna") Then
             If command.Contains("nword") Or command.Contains("n-word") Or command.Contains("n word") Then
-                Return "You cant say that, that's **racist**"
+                Return "You cant say that, that's **racist!**"
             End If
         ElseIf command.Contains("nigga") Or command.Contains("nibba") Or command.Contains("nibber") Or command.Contains("bibba") Or command.Contains("bibber") Or command.Contains("niger") Or command.Contains("nii") Then
+            My.Settings.nWords += 1
+            My.Settings.Save()
             Return "mrs. Obama, *get down*"
         ElseIf host Then
             Console.ForegroundColor = ConsoleColor.Cyan
@@ -121,11 +123,26 @@ Module TheOneBotCLI
             Await discord.StartAsync
             Console.WriteLine()
             Console.ResetColor()
+            AddHandler game.Elapsed, AddressOf gameName
+            game.AutoReset = True
+            game.Enabled = True
+            game.Start()
             CLI()
         Else
             log = False
             Console.WriteLine("Authentication failed " & except)
         End If
+    End Sub
+
+    Async Sub gameName()
+        If gameNumber Then
+            Await discord.SetGameAsync("N word count: " & My.Settings.nWords, "https://github.com/TheOneTrueCode/TheOneBot", ActivityType.Playing)
+            gameNumber = False
+        Else
+            Await discord.SetGameAsync("TheOneBot Stable", "https://github.com/TheOneTrueCode/TheOneBot", ActivityType.Playing)
+            gameNumber = True
+        End If
+
     End Sub
 
     Private Async Function receiver(message As SocketMessage) As Task
