@@ -52,8 +52,45 @@ Module TheOneBotCLI
                     Dim editor As New EditForm
                     Console.WriteLine("Close editor to continue")
                     editor.ShowDialog()
+                    Return "`TheOneBot configuration assistant`" & vbNewLine & "```css" & vbNewLine & wake & "conf help ------------------------------ Returns help dialog on clients, configures main help list on host" & vbNewLine & wake & "conf nword <function>{number} --------- Adjusts TheOneBot's built in nword counter (defaults to host only)" & vbNewLine & vbNewLine & "*Incomplete (more on its way)```"
+                Else
+                    Return "`TheOneBot configuration assistant`" & vbNewLine & "```css" & vbNewLine & wake & "conf help ------------------------------ Returns help dialog on clients, configures main help list on host" & vbNewLine & wake & "conf nword <function>{number} --------- Adjusts TheOneBot's built in nword counter (defaults to host only)" & vbNewLine & vbNewLine & "*Incomplete (more on its way)```"
+                End If
+            ElseIf command.StartsWith(wake & "conf nword") And moderator Then
+                If command.StartsWith(wake & "conf nword +") Then
+                    data = command.Replace(wake & "conf nword +", "")
+                    Try
+                        My.Settings.nWords += Convert.ToDecimal(data)
+                        Return "Added " & data & " nwords!"
+                        My.Settings.Save()
+                    Catch ex As Exception
+                        Return "Failed to add " & data & " nwords to the list"
+                    End Try
+                ElseIf command.StartsWith(wake & "conf nword -") Then
+                    data = command.Replace(wake & "conf nword -", "")
+                    Try
+                        My.Settings.nWords -= Convert.ToDecimal(data)
+                        Return "Removed " & data & " nwords!"
+                        My.Settings.Save()
+                    Catch ex As Exception
+                        Return "Failed to remove " & data & " nwords from the list"
+                    End Try
+                ElseIf command.StartsWith(wake & "conf nword =") Or command.StartsWith(wake & "conf nword ") Then
+                    data = command.Replace(wake & "conf nword ", "")
+                    data = data.Replace("=", "")
+                    Try
+                        My.Settings.nWords = Convert.ToDecimal(data)
+                        Return "Set to " & data & " nwords!"
+                        My.Settings.Save()
+                    Catch ex As Exception
+                        Return "Failed to set list to " & data & " nwords"
+                    End Try
+                Else
+                    Return "Improper use of `conf nword`"
                 End If
             End If
+        ElseIf command.StartsWith(wake & "nword") Then
+            Return "Current *nword* count is " & My.Settings.nWords
         ElseIf command.StartsWith(wake & "help") Then
             Console.ForegroundColor = ConsoleColor.Yellow
             Return My.Settings.help
@@ -69,6 +106,7 @@ Module TheOneBotCLI
             End If
         ElseIf command.StartsWith(wake & "logout") Then
             If host Then
+                My.Settings.Save()
                 discord.StopAsync()
                 Console.Clear()
                 mark()
@@ -79,6 +117,8 @@ Module TheOneBotCLI
             Else
                 Return "(╯°□°）╯︵ ┻━┻ you can not log me out mortal"
             End If
+        ElseIf command.StartsWith("reee") Or command.contains("@everyone") Or command.Contains("@here") Then
+            Return "reeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
         ElseIf command.Contains("going") Or command.Contains("gonna") Then
             If command.Contains("nword") Or command.Contains("n-word") Or command.Contains("n word") Then
                 Return "You cant say that, that's **racist!**"
@@ -94,17 +134,15 @@ Module TheOneBotCLI
         End If
     End Function
     Private Function PingSite(Optional address As String = "discordapp.com")
-        If address.Contains("Ping ") = False Then
-            Try
-                Dim pinger As New Ping
-                Dim reply As PingReply = pinger.Send(address)
-                Return "Ping to `" & reply.Address.ToString & "` (" & address & ") took `" & reply.RoundtripTime & "`ms"
-            Catch ex As Exception
-                Dim pinger As New Ping
-                Dim reply As PingReply = pinger.Send("discord.com")
-                Return "Ping to `" & reply.Address.ToString & "` (defaulted to discord.com) took `" & reply.RoundtripTime & "`ms"
-            End Try
-        End If
+        Try
+            Dim pinger As New Ping
+            Dim reply As PingReply = pinger.Send(address)
+            Return "Ping to `" & reply.Address.ToString & "` (" & address & ") took `" & reply.RoundtripTime & "`ms"
+        Catch ex As Exception
+            Dim pinger As New Ping
+            Dim reply As PingReply = pinger.Send("discord.com")
+            Return "Ping to `" & reply.Address.ToString & "` (defaulted to discord.com) took `" & reply.RoundtripTime & "`ms"
+        End Try
     End Function
     Async Sub attemptConnect()
         Dim good = True
@@ -142,15 +180,15 @@ Module TheOneBotCLI
             Await discord.SetGameAsync("TheOneBot Stable", "https://github.com/TheOneTrueCode/TheOneBot", ActivityType.Playing)
             gameNumber = True
         End If
-
     End Sub
 
     Private Async Function receiver(message As SocketMessage) As Task
-        If DirectCast(message.Author, SocketGuildUser).GuildPermissions.Administrator Then
-            Await message.Channel.SendMessageAsync(interpret(message.Content.ToString.ToLower, False, True))
-            Console.WriteLine("admin")
-        Else
-            Await message.Channel.SendMessageAsync(interpret(message.Content.ToString.ToLower, False, False))
+        If message.Author.IsBot = False Then
+            If DirectCast(message.Author, SocketGuildUser).GuildPermissions.Administrator Then
+                Await message.Channel.SendMessageAsync(interpret(message.Content.ToString.ToLower, False, True))
+            Else
+                Await message.Channel.SendMessageAsync(interpret(message.Content.ToString.ToLower, False, False))
+            End If
         End If
     End Function
 

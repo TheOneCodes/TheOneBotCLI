@@ -1,5 +1,5 @@
 ﻿Imports System.ComponentModel
-
+'A multipurpose limited text editor for making direct changes to application settings
 Public Class EditForm
     Private Sub EditForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         If editorPurpose = 0 Then
