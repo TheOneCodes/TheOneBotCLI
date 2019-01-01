@@ -40,4 +40,8 @@ Public Class LoginForm
         Environment.Exit(0)
     End Sub
 
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        My.Settings.Reset()
+        Environment.Exit(0)
+    End Sub
 End Class

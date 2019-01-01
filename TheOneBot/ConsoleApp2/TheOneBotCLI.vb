@@ -87,8 +87,8 @@ Module TheOneBotCLI
                     End If
                     saveVariables()
                     Exit Do
-                    Else
-                        If customCommands(i, 0) = guildID Then
+                Else
+                    If customCommands(i, 0) = guildID Then
                         currentWake = customCommands(i, 1)
                         Exit Do
                     End If
@@ -249,7 +249,7 @@ Module TheOneBotCLI
                         Console.WriteLine()
                         Console.WriteLine("Nword on `" & guildID & "` from regular user")
                     End If
-                    Return "mrs. Obama, *get down*"
+                    Return "mrs. Obama, *get down!*"
                 End If
             Else
                 Return "mrs. Obama, *get down*"
@@ -261,9 +261,7 @@ Module TheOneBotCLI
             Console.ResetColor()
         Else
             If My.Settings.debug Then
-                Return "Message received but not processed"
-            Else
-                Return Nothing
+                Console.WriteLine("Message received but not processed")
             End If
         End If
         Return Nothing
@@ -344,6 +342,7 @@ Module TheOneBotCLI
 
     Private Async Function receiver(message As SocketMessage) As Task
         If message.Author.IsBot = False Then
+            Dim mention As Boolean = False
             Dim Channel As SocketGuildChannel = message.Channel
             Dim Guild As SocketGuild = Channel.Guild
             If DirectCast(message.Author, SocketGuildUser).GuildPermissions.Administrator Then

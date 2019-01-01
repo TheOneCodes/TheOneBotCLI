@@ -33,6 +33,7 @@ Public Partial Class LoginForm
         Me.lnkHelp = New System.Windows.Forms.LinkLabel()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.LogCheck = New System.Windows.Forms.Timer(Me.components)
+        Me.Button1 = New System.Windows.Forms.Button()
         Me.Panel.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -153,12 +154,22 @@ Public Partial Class LoginForm
         'LogCheck
         '
         '
+        'Button1
+        '
+        Me.Button1.Location = New System.Drawing.Point(211, 12)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(148, 23)
+        Me.Button1.TabIndex = 15
+        Me.Button1.Text = "reset variables"
+        Me.Button1.UseVisualStyleBackColor = True
+        '
         'LoginForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(44, Byte), Integer), CType(CType(47, Byte), Integer), CType(CType(51, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(391, 192)
+        Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.lnkHelp)
         Me.Controls.Add(Me.Panel)
         Me.Controls.Add(Me.PictureBox1)
@@ -185,4 +196,5 @@ Public Partial Class LoginForm
     Friend WithEvents PictureBox1 As Windows.Forms.PictureBox
     Friend WithEvents LogCheck As Windows.Forms.Timer
     Friend WithEvents chkSave As Windows.Forms.CheckBox
+    Friend WithEvents Button1 As Windows.Forms.Button
 End Class
