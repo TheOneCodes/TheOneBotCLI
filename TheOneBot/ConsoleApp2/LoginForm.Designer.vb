@@ -142,7 +142,7 @@ Public Partial Class LoginForm
         '
         Me.PictureBox1.BackColor = System.Drawing.Color.Transparent
         Me.PictureBox1.Dock = System.Windows.Forms.DockStyle.Left
-        Me.PictureBox1.Image = Global.ConsoleApp2.My.Resources.Resources.discord
+        Me.PictureBox1.Image = Global.TheOneBotCLI.My.Resources.Resources.discord
         Me.PictureBox1.Location = New System.Drawing.Point(0, 0)
         Me.PictureBox1.Name = "PictureBox1"
         Me.PictureBox1.Size = New System.Drawing.Size(187, 192)

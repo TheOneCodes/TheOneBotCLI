@@ -19,10 +19,16 @@ ping &lt;discord.com&gt; • • • • • • • • Pings a server and retu
 logout • • • • • • • • • • • • • • Signs the bot out of discord
 ```</Value>
     </Setting>
-    <Setting Name="nWords" Type="System.Int32" Scope="User">
+    <Setting Name="nWords" Type="System.Int64" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="debug" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="customCommands" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="initialSetup" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>

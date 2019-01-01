@@ -6,9 +6,9 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0AEA5DC0-BFCF-404E-A626-859D2716CB68}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <StartupObject>ConsoleApp2.LoginForm</StartupObject>
-    <RootNamespace>ConsoleApp2</RootNamespace>
-    <AssemblyName>ConsoleApp2</AssemblyName>
+    <StartupObject>TheOneBotCLI.LoginForm</StartupObject>
+    <RootNamespace>TheOneBotCLI</RootNamespace>
+    <AssemblyName>TheOneBot</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Console</MyType>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -282,6 +282,7 @@
     <Compile Include="editForm.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Settings.vb" />
     <Compile Include="TheOneBotCLI.vb" />
     <Compile Include="LoginForm.Designer.vb">
       <DependentUpon>LoginForm.vb</DependentUpon>
